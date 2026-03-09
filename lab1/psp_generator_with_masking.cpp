@@ -25,19 +25,19 @@ int main() {
     std::string output_file_name;
 
     std::cout << "Введите имя входного файла: ";
-    std::getline(std::cin >> std::ws, input_file_name);
+    std::getline(std::cin >> std::ws, input_file_name); // std::ws удалаяет пробелы передчтением строки 
 
     std::cout << "Введите имя выходного файла: ";
     std::getline(std::cin >> std::ws, output_file_name);
 
-    std::ifstream input_file(input_file_name, std::ios::binary);
+    std::ifstream input_file(input_file_name, std::ios::binary); // открытие файла для чтения
     if (!input_file.is_open()) {
         std::cerr << "Ошибка: не удалось открыть входной файл\n";
         return 1;
     }
 
-    std::ofstream output_file(output_file_name, std::ios::binary);
-    if (!output_file.is_open()) {
+    std::ofstream output_file(output_file_name, std::ios::binary); // открытие файла для записи
+    if (!output_file.is_open()) { // если не открылся - ошибка!
         std::cerr << "Ошибка: не удалось создать выходной файл\n";
         return 1;
     }
@@ -48,14 +48,14 @@ int main() {
     char input_byte;
     uint8_t gamma_byte;
 
-    while (input_file.get(input_byte)) {
-        gamma_byte = 0;
+    while (input_file.get(input_byte)) { // чтение по одному байту из выходного файла
+        gamma_byte = 0; // обнуляем байт гаммы
 
         for (i = 0; i < 8; i++) {
             feedback_bit_1 = (Rlz1 & 0x1) ^ ((Rlz1 >> 2) & 0x1);
-            Rlz1 = (Rlz1 >> 1) | (feedback_bit_1 << n);
+            Rlz1 = (Rlz1 >> 1) | (feedback_bit_1 << n); // бит вставаляется в позицию i, то есть старшего разряда
 
-            feedback_bit_2 = Rlz2[0] ^ Rlz2[21];
+            feedback_bit_2 = Rlz2[0] ^ Rlz2[21]; // xor
             Rlz2 = (Rlz2 >> 1);
             Rlz2.set(134, feedback_bit_2);
 
@@ -66,7 +66,7 @@ int main() {
         output_file.put(static_cast<char>(static_cast<uint8_t>(input_byte) ^ gamma_byte));
     }
 
-    if (!input_file.eof()) {
+    if (!input_file.eof()) { // если чтение завершилось не из-за конца файла, то ошибка!
         std::cerr << "Ошибка чтения входного файла\n";
         return 1;
     }

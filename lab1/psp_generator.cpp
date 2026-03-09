@@ -2,18 +2,18 @@
 #include <iostream>
 #include <bitset>
 
-uint64_t bit;
+uint64_t bit; // переменная дял хранения текущего бита генератора
 
-//K1(x)=x^35+x^2+1
-int n = 35;
-int i;
-int counter;
+//K1(x)=x^35+x^2+1 точки съема 35 и 2
+int n = 35; // размер первого регистра
+int i; // индекс цикла
+int counter; // счетчик, сколько бит нужно сгенерировать
 
-uint64_t Rlz1 = 0xD4B; //0000110101001011
-uint64_t feedback_bit_1;
+uint64_t Rlz1 = 0xD4B; //00001101010010, оно же начальное состояние регистра, оно же 64-битное беззнаковое число 
+uint64_t feedback_bit_1; // переменная для хранения битов обратной связи
 
 //K2(x)=x^135+x^22+1 точки съема 135 и 22
-uint64_t feedback_bit_2;
+uint64_t feedback_bit_2; // переменная для хранения битов обратной связи 
 
 std::bitset<135> Rlz2(0xABFCBBAEA); // старшие биты
 std::bitset<135> Rlz2_1(0xAAFEBBECFEBAAFCA); //младшие биты
@@ -22,18 +22,18 @@ int main() {
     std::cout << "Количество бит: ";
     std::cin >> counter;
 
-    Rlz2 = Rlz2<<64;
-    Rlz2 = Rlz2|Rlz2_1;
+    Rlz2 = Rlz2<<64; // сдвигаем старшую часть регистра на 64 бита влево
+    Rlz2 = Rlz2|Rlz2_1; // объединяем обе части в один битсет
 
     for (i = 0; i < counter; i++) {
-        feedback_bit_1 = (Rlz1&0x1)^((Rlz1>>2)&0x1);
-        Rlz1 = (Rlz1>>1)|(feedback_bit_1<<n);
+        feedback_bit_1 = (Rlz1&0x1)^((Rlz1>>2)&0x1); // Rlz1&0x1 - маска, оставляет только последний бит 
+        Rlz1 = (Rlz1>>1)|(feedback_bit_1<<n); // регистр сдвигает на 1 вправо, feedback_bit_1<<n - новый бит помещается в старщий разряд, объединение
 
-        feedback_bit_2 = Rlz2[0]^Rlz2[21];
-        Rlz2 = (Rlz2>>1);
-        Rlz2.set(134, feedback_bit_2);
+        feedback_bit_2 = Rlz2[0]^Rlz2[21]; // точки съема 135 и 22, так как нумерация с 0
+        Rlz2 = (Rlz2>>1); // сдвиг на 1 вправо
+        Rlz2.set(134, feedback_bit_2); // утсанавливает старший бит 
 
-        bit = ((feedback_bit_1)^(feedback_bit_2));
-        std::cout << bit;
+        bit = ((feedback_bit_1)^(feedback_bit_2)); // xor выходов двух регистров
+        std::cout << bit; // печать последовательности 
     }
 }
