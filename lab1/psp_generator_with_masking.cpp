@@ -9,7 +9,7 @@ uint64_t bit;
 int n = 35;
 int i;
 
-uint64_t Rlz1 = 0x000000D4B;
+uint64_t Rlz1 = 0x1A3F5C9AB;
 uint64_t feedback_bit_1;
 
 // K2(x)=x^135+x^22+1
